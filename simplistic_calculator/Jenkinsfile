@@ -15,6 +15,15 @@ pipeline {
             }
         }
 
+        stage('Fix Flutter SDK Permissions') {
+            steps {
+                sh '''
+                    # Fix permissions for Flutter SDK
+                    chown -R $USER:$USER $FLUTTER_HOME
+                '''
+            }
+        }
+
         
 
         stage('Flutter Install') {
