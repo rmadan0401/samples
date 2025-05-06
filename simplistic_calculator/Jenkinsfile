@@ -2,12 +2,17 @@ pipeline {
     agent any
 
     environment {
-    FLUTTER_HOME = "/home/ext_rmadan_vecv_in/flutter-sdk/flutter"
-    PATH = "${FLUTTER_HOME}/bin:${PATH}"
-}
-
+        FLUTTER_HOME = "/home/ext_rmadan_vecv_in/flutter-sdk/flutter"
+        PATH = "${FLUTTER_HOME}/bin:${PATH}"
+    }
 
     stages {
+        stage('Set Git Safe Directory') {
+            steps {
+                sh 'git config --global --add safe.directory /home/ext_rmadan_vecv_in/flutter-sdk/flutter'
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 dir('simplistic_calculator') {
