@@ -2,9 +2,10 @@ pipeline {
     agent any
 
     environment {
-        FLUTTER_HOME = "${HOME}/flutter-sdk/flutter"
-        PATH = "${FLUTTER_HOME}/bin:${PATH}"
-    }
+    FLUTTER_HOME = "/home/ext_rmadan_vecv_in/flutter-sdk/flutter"
+    PATH = "${FLUTTER_HOME}/bin:${PATH}"
+}
+
 
     stages {
         stage('Install Dependencies') {
