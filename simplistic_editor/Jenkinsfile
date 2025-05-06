@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    environment {
+        PATH = "${HOME}/flutter-sdk/flutter/bin:${PATH}"
+    }
+
+    stages {
+        stage('Install Dependencies') {
+            steps {
+                dir('simplistic_calculator') {
+                    sh 'flutter pub get'
+                }
+            }
+        }
+
+        stage('Analyze Code') {
+            steps {
+                dir('simplistic_calculator') {
+                    sh 'flutter analyze'
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                dir('simplistic_calculator') {
+                    sh 'flutter test'
+                }
+            }
+        }
+
+        stage('Build APK') {
+            steps {
+                dir('simplistic_calculator') {
+                    sh 'flutter build apk --debug'
+                }
+            }
+        }
+
+        stage('Archive APK') {
+            steps {
+                archiveArtifacts artifacts: 'simplistic_calculator/build/app/outputs/flutter-apk/app-debug.apk', fingerprint: true
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Finished Flutter CI pipeline'
+        }
+    }
+}
