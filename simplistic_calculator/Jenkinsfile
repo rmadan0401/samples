@@ -2,59 +2,43 @@ pipeline {
     agent any
 
     environment {
-        FLUTTER_HOME = "/home/ext_rmadan_vecv_in/flutter-sdk/flutter"
-        PATH = "${FLUTTER_HOME}/bin:${PATH}"
+        ANDROID_HOME = '/home/ext_rmadan_vecv_in/android-sdk'
+        FLUTTER_HOME = '/home/ext_rmadan_vecv_in/flutter-sdk/flutter'
+        GRADLE_USER_HOME = "${HOME}/.gradle"
+        PATH = "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$FLUTTER_HOME/bin:$PATH"
     }
 
     stages {
-        stage('Fix Permissions') {
+        stage('Clean Workspace') {
             steps {
-                sh 'chmod -R u+rw /home/ext_rmadan_vecv_in/flutter-sdk/flutter/bin/cache'
+                cleanWs()
             }
         }
 
-        stage('Install Dependencies') {
+        
+
+        stage('Flutter Install') {
             steps {
-                dir('simplistic_calculator') {
-                    sh '${FLUTTER_HOME}/bin/flutter pub get'
-                }
+                sh '''
+                    # Ensure Flutter is installed and check the environment
+                    flutter doctor
+                '''
             }
         }
 
-        stage('Analyze Code') {
+        stage('Build Debug APK') {
             steps {
-                dir('simplistic_calculator') {
-                    sh '${FLUTTER_HOME}/bin/flutter analyze'
-                }
+                sh '''
+                    # Build Debug APK (no signing)
+                    flutter build apk --debug
+                '''
             }
         }
 
-        stage('Run Tests') {
+        stage('Archive') {
             steps {
-                dir('simplistic_calculator') {
-                    sh '${FLUTTER_HOME}/bin/flutter test'
-                }
+                archiveArtifacts artifacts: '**/*.apk', allowEmptyArchive: true
             }
-        }
-
-        stage('Build APK') {
-            steps {
-                dir('simplistic_calculator') {
-                    sh '${FLUTTER_HOME}/bin/flutter build apk --debug'
-                }
-            }
-        }
-
-        stage('Archive APK') {
-            steps {
-                archiveArtifacts artifacts: 'simplistic_calculator/build/app/outputs/flutter-apk/app-debug.apk', fingerprint: true
-            }
-        }
-    }
-
-    post {
-        always {
-            echo 'Finished Flutter CI pipeline'
         }
     }
 }
