@@ -7,9 +7,9 @@ pipeline {
     }
 
     stages {
-        stage('Set Git Safe Directory') {
+        stage('Fix Permissions') {
             steps {
-                sh 'git config --global --add safe.directory /home/ext_rmadan_vecv_in/flutter-sdk/flutter'
+                sh 'chmod -R u+rw /home/ext_rmadan_vecv_in/flutter-sdk/flutter/bin/cache'
             }
         }
 
