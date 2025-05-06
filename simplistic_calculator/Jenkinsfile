@@ -2,14 +2,15 @@ pipeline {
     agent any
 
     environment {
-        PATH = "${HOME}/flutter-sdk/flutter/bin:${PATH}"
+        FLUTTER_HOME = "${HOME}/flutter-sdk/flutter"
+        PATH = "${FLUTTER_HOME}/bin:${PATH}"
     }
 
     stages {
         stage('Install Dependencies') {
             steps {
                 dir('simplistic_calculator') {
-                    sh 'flutter pub get'
+                    sh '${FLUTTER_HOME}/bin/flutter pub get'
                 }
             }
         }
@@ -17,7 +18,7 @@ pipeline {
         stage('Analyze Code') {
             steps {
                 dir('simplistic_calculator') {
-                    sh 'flutter analyze'
+                    sh '${FLUTTER_HOME}/bin/flutter analyze'
                 }
             }
         }
@@ -25,7 +26,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 dir('simplistic_calculator') {
-                    sh 'flutter test'
+                    sh '${FLUTTER_HOME}/bin/flutter test'
                 }
             }
         }
@@ -33,7 +34,7 @@ pipeline {
         stage('Build APK') {
             steps {
                 dir('simplistic_calculator') {
-                    sh 'flutter build apk --debug'
+                    sh '${FLUTTER_HOME}/bin/flutter build apk --debug'
                 }
             }
         }
