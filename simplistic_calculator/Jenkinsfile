@@ -15,13 +15,7 @@ pipeline {
             }
         }
 
-        stage('Checkout') {
-            steps {
-                git branch: 'setup/ci',
-                    url: 'https://github.com/VECV-Mobile-App/EOS-TAB.git',
-                    credentialsId: 'github-credentials'
-            }
-        }
+       
 
         stage('Set Up Environment') {
             steps {
