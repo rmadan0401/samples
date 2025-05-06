@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         ANDROID_HOME = '/home/ext_rmadan_vecv_in/android-sdk'
-        FLUTTER_HOME = '/home/ext_rmadan_vecv_in/flutter-sdk/flutter'
         GRADLE_USER_HOME = "${HOME}/.gradle"
+        FLUTTER_HOME = '/home/ext_rmadan_vecv_in/flutter-sdk/flutter'
         PATH = "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$FLUTTER_HOME/bin:$PATH"
     }
 
@@ -15,14 +15,20 @@ pipeline {
             }
         }
 
-        
-        
+        stage('Checkout') {
+            steps {
+                git branch: 'setup/ci',
+                    url: 'https://github.com/VECV-Mobile-App/EOS-TAB.git',
+                    credentialsId: 'github-credentials'
+            }
+        }
 
-        stage('Flutter Install') {
+        stage('Set Up Environment') {
             steps {
                 sh '''
-                    # Ensure Flutter is installed and check the environment
-                    flutter doctor
+                    yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+                    $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
+                        "platform-tools" "platforms;android-34" "build-tools;29.0.2"
                 '''
             }
         }
@@ -30,15 +36,11 @@ pipeline {
         stage('Build Debug APK') {
             steps {
                 sh '''
-                    # Build Debug APK (no signing)
-                    flutter build apk --debug
+                    # Build Debug APK
+                    $FLUTTER_HOME/bin/flutter clean
+                    $FLUTTER_HOME/bin/flutter pub get
+                    $FLUTTER_HOME/bin/flutter build apk --debug
                 '''
-            }
-        }
-
-        stage('Archive') {
-            steps {
-                archiveArtifacts artifacts: '**/*.apk', allowEmptyArchive: true
             }
         }
     }
